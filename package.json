@@ -1,0 +1,18 @@
+{
+  "name": "remote-banana",
+  "version": "0.0.1",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "prepare": "npm run build"
+  },
+  "keywords": [
+    "banana",
+    "gorilla"
+  ],
+  "author": "Franco Victorio <victorio.franco@gmail.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "typescript": "^3.9.2"
+  }
+}
