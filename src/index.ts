@@ -28,11 +28,7 @@ export class Remote<T> {
   protected status: RemoteStatus<T>
 
   protected constructor(status?: RemoteStatus<T>) {
-    if (status) {
-      this.status = status
-    } else {
-      this.status = notAsked()
-    }
+    this.status = status || notAsked()
   }
 
   public hasData(): this is RemoteWithData<T> {
@@ -72,11 +68,7 @@ export class Remote<T> {
   }
 
   public get(): T | null {
-    if (this.status._type === 'success') {
-      return this.status.data
-    }
-
-    return null
+    return this.status._type === 'success' ? this.status.data : null
   }
 
   public isLoading(): boolean {
@@ -84,11 +76,7 @@ export class Remote<T> {
   }
 
   public getOr(defaultData: T): T {
-    if (this.status._type === 'success') {
-      return this.status.data
-    }
-
-    return defaultData
+    return this.get() || defaultData
   }
 
   static success<T>(data: T): Remote<T> {
@@ -107,11 +95,6 @@ export class Remote<T> {
 class RemoteWithData<T> extends Remote<T> {
   protected status: RemoteStatusSuccess<T>
   constructor(data: T) {
-    super()
-    this.status = success(data)
-  }
-
-  public get(): T {
-    return this.status.data
+    super(success(data))
   }
 }
