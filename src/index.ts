@@ -28,11 +28,7 @@ export class Remote<T> {
   protected status: RemoteStatus<T>
 
   protected constructor(status?: RemoteStatus<T>) {
-    if (status) {
-      this.status = status
-    } else {
-      this.status = notAsked()
-    }
+    this.status = status || notAsked()
   }
 
   public hasData(): this is RemoteWithData<T> {
@@ -45,26 +41,22 @@ export class Remote<T> {
     onNotAsked,
     onFailure,
   }: {
-    onSuccess: ((data: T) => U) | U
-    onLoading: (() => U) | U
-    onNotAsked: (() => U) | U
-    onFailure: ((e: Error) => U) | U
+    onSuccess: (data: T) => U
+    onLoading: () => U
+    onNotAsked: () => U
+    onFailure: (e: Error) => U
   }): U {
     if (this.status._type === 'notAsked') {
-      return onNotAsked instanceof Function ? onNotAsked() : onNotAsked
+      return onNotAsked()
     }
     if (this.status._type === 'success') {
-      return onSuccess instanceof Function
-        ? onSuccess(this.status.data)
-        : onSuccess
+      return onSuccess(this.status.data)
     }
     if (this.status._type === 'loading') {
-      return onLoading instanceof Function ? onLoading() : onLoading
+      return onLoading()
     }
     if (this.status._type === 'failure') {
-      return onFailure instanceof Function
-        ? onFailure(this.status.error)
-        : onFailure
+      return onFailure(this.status.error)
     }
 
     const exhaustiveCheck: never = this.status
@@ -72,11 +64,7 @@ export class Remote<T> {
   }
 
   public get(): T | null {
-    if (this.status._type === 'success') {
-      return this.status.data
-    }
-
-    return null
+    return this.status._type === 'success' ? this.status.data : null
   }
 
   public isLoading(): boolean {
@@ -84,11 +72,7 @@ export class Remote<T> {
   }
 
   public getOr(defaultData: T): T {
-    if (this.status._type === 'success') {
-      return this.status.data
-    }
-
-    return defaultData
+    return this.get() || defaultData
   }
 
   static success<T>(data: T): Remote<T> {
@@ -106,6 +90,7 @@ export class Remote<T> {
 
 class RemoteWithData<T> extends Remote<T> {
   protected status: RemoteStatusSuccess<T>
+
   constructor(data: T) {
     super()
     this.status = success(data)
