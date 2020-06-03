@@ -94,7 +94,13 @@ export class Remote<T> {
 
 class RemoteWithData<T> extends Remote<T> {
   protected status: RemoteStatusSuccess<T>
+
   constructor(data: T) {
-    super(success(data))
+    super()
+    this.status = success(data)
+  }
+
+  public get(): T {
+    return this.status.data
   }
 }
