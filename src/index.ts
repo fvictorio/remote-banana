@@ -41,26 +41,22 @@ export class Remote<T> {
     onNotAsked,
     onFailure,
   }: {
-    onSuccess: ((data: T) => U) | U
-    onLoading: (() => U) | U
-    onNotAsked: (() => U) | U
-    onFailure: ((e: Error) => U) | U
+    onSuccess: (data: T) => U
+    onLoading: () => U
+    onNotAsked: () => U
+    onFailure: (e: Error) => U
   }): U {
     if (this.status._type === 'notAsked') {
-      return onNotAsked instanceof Function ? onNotAsked() : onNotAsked
+      return onNotAsked()
     }
     if (this.status._type === 'success') {
-      return onSuccess instanceof Function
-        ? onSuccess(this.status.data)
-        : onSuccess
+      return onSuccess(this.status.data)
     }
     if (this.status._type === 'loading') {
-      return onLoading instanceof Function ? onLoading() : onLoading
+      return onLoading()
     }
     if (this.status._type === 'failure') {
-      return onFailure instanceof Function
-        ? onFailure(this.status.error)
-        : onFailure
+      return onFailure(this.status.error)
     }
 
     const exhaustiveCheck: never = this.status
